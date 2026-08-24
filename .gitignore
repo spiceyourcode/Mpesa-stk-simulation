@@ -1,0 +1,30 @@
+# Backend dependencies
+server/node_modules/
+
+# Backend environment variables
+server/.env
+server/.env.*
+!server/.env.example
+
+# Backend build files
+server/dist/
+server/build/
+
+# Backend logs
+server/*.log
+server/npm-debug.log*
+server/yarn-debug.log*
+server/yarn-error.log*
+server/pnpm-debug.log*
+
+# Coverage
+server/coverage/
+server/.nyc_output/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/

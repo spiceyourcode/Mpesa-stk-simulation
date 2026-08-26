@@ -4,10 +4,15 @@ import dotenv from "dotenv";
 import { getAccessToken, generatePassword } from "./services/darajaServices.js";
 import mpesaRoutes from "./routes/mpesaRoutes.js";
 import pool from "./db/db.js"; 
+import morgan from 'morgan';
+import helmet from 'helmet';
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+app.use(helmet());
+app.use(morgan('dev'));
 
 app.use(cors());
 app.use(express.json());

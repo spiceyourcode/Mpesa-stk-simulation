@@ -47,6 +47,18 @@ export async function createOrder(req, res) {
         transactionDescription: `Payment for order ${orderId}`,
       });
 
+      const { MerchantRequestID, CheckoutRequestID, ResponseCode } = mpesaResponse;
+      await pool.execute(
+        `
+        UPDATE orders
+        SET merchant_request_id = ?,
+            checkout_request_id = ?,
+            result_code = ?
+        WHERE id = ?
+        `,
+        [MerchantRequestID, CheckoutRequestID, ResponseCode, orderId]
+      );
+
       return res.status(201).json({
         success: true,
 

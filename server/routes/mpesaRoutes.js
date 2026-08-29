@@ -1,10 +1,10 @@
-import express, { response } from "express";
-import { stkPush } from "../services/darajaServices.js";
-import { getAccessToken } from "../services/darajaServices.js";
-import { initiateStkPush } from "../controllers/mpesaController.js";
-const router = express.Router();
+import { Router } from "express";
+import { initiateStkPush, handleStkCallback } from "../controllers/mpesaController.js";
+
+const router = Router();
 
 router.post("/stkpush", initiateStkPush);
+router.post("/callback", handleStkCallback);
 
 router.get('/health',(req, res)=>{
     res.json({

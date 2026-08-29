@@ -1,5 +1,5 @@
-import express, { response } from "express";
-import { getAccessToken, stkPush } from "../services/darajaServices.js";
+import pool from "../db/db.js";
+import { stkPush } from "../services/darajaServices.js";
 
 export async function initiateStkPush(req, res) {
     try {
@@ -25,4 +25,41 @@ export async function initiateStkPush(req, res) {
             error: error.response?.data || error.message,
         });
     }
+}
+
+export async function handleStkCallback(req, res) {
+    try {
+        const callback = req.body?.Body?.stkCallback;
+
+        if (!callback) {
+            return res.status(200).json({ ResponseCode: 0, ResultDesc: "Accepted" });
+        }
+
+        const { CheckoutRequestID, ResponseCode, ResponseDescription } = callback;
+        const status = Number(ResponseCode) === 0 ? "PAID" : "FAILED";
+
+        await pool.execute(
+            `
+            UPDATE orders
+            SET status = ?,
+                result_code = ?
+            WHERE checkout_request_id = ?
+            `,
+            [status, String(ResponseCode), CheckoutRequestID]
+        );
+
+        console.log("STK callback processed:", {
+            CheckoutRequestID,
+            ResponseCode,
+            ResultDesc,
+            status,
+        });
+    } catch (error) {
+        console.error("STK callback error:", error.message);
+    }
+
+    return res.status(200).json({
+        ResponseCode: 0,
+        ResultDesc: "Accepted",
+    });
 }

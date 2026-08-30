@@ -32,11 +32,11 @@ export async function handleStkCallback(req, res) {
         const callback = req.body?.Body?.stkCallback;
 
         if (!callback) {
-            return res.status(200).json({ ResponseCode: 0, ResultDesc: "Accepted" });
+            return res.status(200).json({ ResultCode: 0, ResultDesc: "Accepted" });
         }
 
-        const { CheckoutRequestID, ResponseCode, ResponseDescription } = callback;
-        const status = Number(ResponseCode) === 0 ? "PAID" : "FAILED";
+        const { CheckoutRequestID, ResultCode, ResultDesc } = callback;
+        const status = Number(ResultCode) === 0 ? "PAID" : "FAILED";
 
         await pool.execute(
             `
@@ -45,12 +45,12 @@ export async function handleStkCallback(req, res) {
                 result_code = ?
             WHERE checkout_request_id = ?
             `,
-            [status, String(ResponseCode), CheckoutRequestID]
+            [status, String(ResultCode), CheckoutRequestID]
         );
 
         console.log("STK callback processed:", {
             CheckoutRequestID,
-            ResponseCode,
+            ResultCode,
             ResultDesc,
             status,
         });
@@ -59,7 +59,7 @@ export async function handleStkCallback(req, res) {
     }
 
     return res.status(200).json({
-        ResponseCode: 0,
+        ResultCode: 0,
         ResultDesc: "Accepted",
     });
 }

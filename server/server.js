@@ -7,7 +7,6 @@ import helmet from 'helmet';
 import mpesaRoutes from "./routes/mpesaRoutes.js";
 import dbRoutes from "./routes/dbRoutes.js"
 import orderRoutes from "./routes/orderRoutes.js"
-import { handleStkCallback } from "./controllers/mpesaController.js"; 
 
 dotenv.config();
 
@@ -27,10 +26,9 @@ app.get('/', (req, res)=>{
 })
 
 app.use("/api/mpesa", mpesaRoutes);
-app.post("/callback/mpesa", handleStkCallback);
 app.use("/api/test-db", dbRoutes )
 app.use("/api/order", orderRoutes)
 
 app.listen(PORT, ()=>{
     console.log(`Server is running on port ${PORT}`);
-});
+}); 

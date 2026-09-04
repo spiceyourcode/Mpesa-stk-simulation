@@ -35,17 +35,29 @@ export async function handleStkCallback(req, res) {
             return res.status(200).json({ ResultCode: 0, ResultDesc: "Accepted" });
         }
 
-        const { CheckoutRequestID, ResultCode, ResultDesc } = callback;
+        const { CheckoutRequestID, ResultCode, ResultDesc, CallbackMetadata } = callback;  
+     
+        const mpesaReceiptNumber = CallbackMetadata?.Item?.find(
+            (item)=>item.Name === "MpesaReceiptNumber"
+        )?.Value || underfined;
+    
+        const phoneNumber = CallbackMetadata?.Item?.find(
+            (item)=>item.Name === "PhoneNumber"
+        )?.Value || underfined; 
+
         const status = Number(ResultCode) === 0 ? "PAID" : "FAILED";
 
         await pool.execute(
             `
             UPDATE orders
             SET status = ?,
-                result_code = ?
+                result_code = ?,
+                result_description = ?,
+                mpesa_receipt= ?,
+                phone_number = ?
             WHERE checkout_request_id = ?
             `,
-            [status, String(ResultCode), CheckoutRequestID]
+            [status, String(ResultCode), ResultDesc, mpesaReceiptNumber, phoneNumber, CheckoutRequestID]
         );
 
         console.log("STK callback processed:", {

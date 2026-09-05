@@ -108,7 +108,7 @@ export async function createOrder(req, res) {
 
 export async function getOrder(req, res){
   try{
-    const {id} = req.params; 
+    const  id = req.params; 
     const [rows] = await pool.execute(
       `
       SELECT id, amount, phone_number, status, mpesa_receipt, result_description
@@ -125,18 +125,13 @@ export async function getOrder(req, res){
     }
     return res.status(200).json({
       success:true,
-      order: rows[0]
+      order: rows
     });
   }
   catch(error){
     console.error(
       "Get Order Error",
       error.response?.data || error.message
-    )
-    return res.status(500).json({
-      success:false,
-      message: "Database connection failed"
-    })
+      )
   }
-  
 }

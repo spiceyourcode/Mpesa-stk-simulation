@@ -21,7 +21,7 @@ app.use(express.json());
 
 app.get('/', (req, res)=>{
     res.json({
-        message:"Mpesa STK server is running"
+        message:"Mpesa STK server is running ❤️‍🔥"
     })
 })
 

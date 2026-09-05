@@ -39,11 +39,11 @@ export async function handleStkCallback(req, res) {
      
         const mpesaReceiptNumber = CallbackMetadata?.Item?.find(
             (item)=>item.Name === "MpesaReceiptNumber"
-        )?.Value || underfined;
+        )?.Value ?? null;
     
         const phoneNumber = CallbackMetadata?.Item?.find(
             (item)=>item.Name === "PhoneNumber"
-        )?.Value || underfined; 
+        )?.Value ?? null; 
 
         const status = Number(ResultCode) === 0 ? "PAID" : "FAILED";
 

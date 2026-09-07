@@ -108,7 +108,7 @@ export async function createOrder(req, res) {
 
 export async function getOrder(req, res){
   try{
-    const  id = req.params; 
+    const  {id} = req.params; 
     const [rows] = await pool.execute(
       `
       SELECT id, amount, phone_number, status, mpesa_receipt, result_description
@@ -120,18 +120,22 @@ export async function getOrder(req, res){
     if(!rows.length){
     return res.status(404).json({
       success:false,
-      message: "Order not found"
+      message: "Order not found",
     });
     }
     return res.status(200).json({
       success:true,
-      order: rows
+      order: rows[0],
     });
   }
   catch(error){
     console.error(
       "Get Order Error",
       error.response?.data || error.message
-      )
+    );
+    return res.status(500).json({
+      success: false,
+      message: "Could not get order",
+    });
   }
 }

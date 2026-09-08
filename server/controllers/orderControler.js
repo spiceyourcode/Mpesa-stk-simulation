@@ -13,7 +13,7 @@ export async function createOrder(req, res) {
       });
     }
 
-    // Validate amount
+    // Validate amount making sure its numeric and non zero value 
     const numericAmount = Number(amount);
 
     if (!Number.isFinite(numericAmount) || numericAmount <= 0) {

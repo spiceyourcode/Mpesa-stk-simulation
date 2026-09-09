@@ -5,8 +5,9 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 
 import mpesaRoutes from "./routes/mpesaRoutes.js";
-import dbRoutes from "./routes/dbRoutes.js"
-import orderRoutes from "./routes/orderRoutes.js"
+import dbRoutes from "./routes/dbRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.get('/', (req, res)=>{
     })
 })
 
+app.use("/api/auth", authRoutes);
 app.use("/api/mpesa", mpesaRoutes);
 app.use("/api/test-db", dbRoutes )
 app.use("/api/order", orderRoutes)

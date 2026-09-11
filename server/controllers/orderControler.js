@@ -29,11 +29,12 @@ export async function createOrder(req, res) {
       INSERT INTO orders (
         amount,
         phone_number,
-        status
+        status,
+        user_id
       )
-      VALUES (?, ?, 'PENDING')
+      VALUES (?, ?, 'PENDING', ?)
       `,
-      [numericAmount, phoneNumber]
+      [numericAmount, phoneNumber, req.user.id]
     );
 
     const orderId = result.insertId;
@@ -113,9 +114,10 @@ export async function getOrder(req, res){
       `
       SELECT id, amount, phone_number, status, mpesa_receipt, result_description
       FROM orders 
-      WHERE id = ?      
+      WHERE id = ?
+      AND user_id = ? 
       `,
-      [id]
+      [id, req.user.id]
     );
     if(!rows.length){
     return res.status(404).json({

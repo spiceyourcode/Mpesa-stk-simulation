@@ -1,13 +1,73 @@
 import { useState } from "react";
 import axios from "axios";
+import {api, saveAuth, getToken } from './api';   
 import "./App.css";
 
 function App() {
+  const [view, setView] = useState(getToken() ? "pay" : "login");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [authMessage, setAuthMessage] = useState("");
+
   const [amount, setAmount] = useState("1");
   const [phoneNumber, setPhoneNumber] = useState("254792873281");
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
   const [order, setOrder] = useState(null);
+
+  const submitAuth = async (e)=> {
+    e.preventDefault();
+    setAuthMessage("");
+    const path = view === "register" ? "/api/auth/register" : "/api/auth/login"; 
+    try{
+      const {data} = await api.post(path, {email, password }); 
+      saveAuth(data.token); 
+      setView("pay");
+    }catch(error){
+      setAuthMessage(error.response?.data?.message || "Auth failed " )
+    }
+  };
+
+  // const logout = ()=>{
+  //   clearAuth();
+  //   setView("login");
+  //   setPassword("");
+  // }
+  if (view === "login" || view === "register") {
+    return (
+      <div className="app">
+        <h1>{view === "register" ? "Create account" : "Log in"}</h1>
+        <form onSubmit={submitAuth}>
+          <label>
+            Email
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </label>
+          <label>
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+            />
+          </label>
+          <button type="submit">
+            {view === "register" ? "Register" : "Log in"}
+          </button>
+        </form>
+        {authMessage && <p className="error">{authMessage}</p>}
+        <button type="button" onClick={() => setView(view === "login" ? "register" : "login")}>
+          {view === "login" ? "Need an account?" : "Already have an account?"}
+        </button>
+      </div>
+    );
+  }
 
   const pay = async (e) => {
     e.preventDefault();

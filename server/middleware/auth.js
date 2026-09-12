@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export function requireAuth(req, res, next){
-    const header = req.headers.authorzation || "";
+    const header = req.headers.authorization || "";
     const [scheme, token] = header.split(" ");
 
     if(scheme !== "Bearer" || !token){

@@ -1,6 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
-import {api, saveAuth, getToken } from './api';   
+import { api, saveAuth, clearAuth, getToken } from "./api";
 import "./App.css";
 
 function App() {
@@ -28,11 +27,11 @@ function App() {
     }
   };
 
-  // const logout = ()=>{
-  //   clearAuth();
-  //   setView("login");
-  //   setPassword("");
-  // }
+  const logout = () => {
+    clearAuth();
+    setView("login");
+    setPassword("");
+  };
   if (view === "login" || view === "register") {
     return (
       <div className="app">
@@ -76,7 +75,7 @@ function App() {
     setOrder(null);
 
     try {
-      const { data } = await axios.post("/api/order", {
+      const { data } = await api.post("/api/order", {
         amount: Number(amount),
         phoneNumber,
       });
@@ -89,7 +88,7 @@ function App() {
       const started = Date.now();
       const timer = setInterval(async () => {
         try {
-          const { data: poll } = await axios.get(`/api/order/${orderId}`);
+          const { data: poll } = await api.get(`/api/order/${orderId}`);
           const current = poll.order;
           setOrder(current);
 
@@ -113,6 +112,12 @@ function App() {
         }
       }, 3000);
     } catch (error) {
+      if (error.response?.status === 401) {
+        clearAuth();
+        setView("login");
+        setAuthMessage("Please log in again.");
+        return;
+      }
       setStatus("error");
       setMessage(
         error.response?.data?.message || "Could not start payment."
@@ -123,6 +128,9 @@ function App() {
   return (
     <div className="app">
       <h1>Pay with M-Pesa</h1>
+      <button type="button" onClick={logout}>
+        Log out
+      </button>
 
       <form onSubmit={pay}>
         <label>
